@@ -2,6 +2,7 @@ import os
 import markdown
 import re
 import shutil
+from pymdownx import arithmatex
 
 ANKI_MEDIA = "/home/alderson/.local/share/Anki2/main/collection.media/"
 IMAGES_PATH = "/home/alderson/Apps/obsidian/main/3. Resources/_Images"
@@ -65,29 +66,24 @@ def convert_obsidian_links(md_content):
 
   return re.sub(obsidian_image_pattern, replacement, md_content)
 
-def replace_latex_syntax(md_content):
-    block_math_pattern = r"\$\$(.*?)\$\$"
-    md_content = re.sub(block_math_pattern, r"\\\\[\1\\\\]", md_content, flags=re.DOTALL)
-
-    inline_math_pattern = r"\$(.*?)\$"
-    md_content = re.sub(inline_math_pattern, r"\\\\(\1\\\\)", md_content)
-
-    return md_content
-
-
 def convert_to_html(fullPath):
     with open(fullPath, "r", encoding="utf-8") as md_file:
         md_content = md_file.read()
+
     if "no_anki" in md_content:
         return False
 
     md_content = convert_obsidian_links(md_content)
     md_content = process_brackets(md_content)
-    md_content = replace_latex_syntax(md_content)
+    # md_content = replace_latex_syntax(md_content)
     md_content = md_content.replace("\n", "\n\n");
 
     md_content = md_content.split("---")[2]
 
-    html_content = markdown.markdown(md_content)
+    html_content = markdown.markdown(
+        md_content,
+        extensions=['pymdownx.arithmatex', 'pymdownx.escapeall'],
+        extension_configs={'pymdownx.arithmatex': {'generic': True}}
+    )
 
     return html_content
