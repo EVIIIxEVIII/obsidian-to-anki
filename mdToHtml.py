@@ -78,10 +78,13 @@ def replace_latex_syntax(md_content):
 def convert_to_html(fullPath):
     with open(fullPath, "r", encoding="utf-8") as md_file:
         md_content = md_file.read()
+    if "no_anki" in md_content:
+        return False
 
     md_content = convert_obsidian_links(md_content)
     md_content = process_brackets(md_content)
     md_content = replace_latex_syntax(md_content)
+    md_content = md_content.replace("\n", "\n\n");
 
     md_content = md_content.split("---")[2]
 

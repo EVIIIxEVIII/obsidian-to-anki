@@ -15,6 +15,9 @@ def read_file_in_dir(dir):
                 deck_name = get_deck_name(file_path)
                 html_content = mdToHtml.convert_to_html(file_path);
 
+                if not html_content:
+                    continue
+
                 ankiConnector.import_card(deck_name, file_name, html_content)
 
             except Exception as e:
